@@ -2,23 +2,34 @@ import React, { useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
-import { postCreateUser } from '../services/UserService'
+import { postCreateUser, putUpdateUser } from '../services/UserService'
 import { toast } from 'react-toastify';
 
 const ModalEditUser = (props) => {
-    const { show, handleClose, handleUpdateTable,dataUserEdit,setDataUserEdit } = props;
+    const { show, handleClose, dataUserEdit, handleEditUserFromModal } = props;
     const [name, setName] = useState("");
     const [job, setJob] = useState("");
-    const handleEditUser = () => {
-        
+    const handleEditUser = async () => {
+        let res = await putUpdateUser(name, job);
+        if (res && res.updatedAt) {
+            //Success
+            handleEditUserFromModal({
+                first_name: name,
+                id: dataUserEdit.id
+            })
+            handleClose();
+        }
+        toast.success("Updated User");
     }
 
-    useEffect(()=>{
-        if(show){
+
+
+    useEffect(() => {
+        if (show) {
             setName(dataUserEdit.first_name)
         }
-    },[dataUserEdit])
-    console.log("Check data: " ,dataUserEdit);
+    }, [dataUserEdit])
+    // console.log("Check dataUserEdit: ", dataUserEdit);
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -57,7 +68,7 @@ const ModalEditUser = (props) => {
                 <Button variant="secondary" onClick={() => handleClose()}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={() => handleEditUser(name, job)}>
+                <Button variant="primary" onClick={() => handleEditUser()}>
                     Confirm
                 </Button>
             </Modal.Footer>

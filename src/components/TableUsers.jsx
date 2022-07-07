@@ -1,12 +1,13 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
-import { fetchAllUsers } from '../services/UserService'
+import { fetchAllUsers } from '../services/UserService';
 import ReactPaginate from 'react-paginate';
 // import axios from 'axios';
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import ModalAddNew from './ModalAddNew';
-import ModalEditUser from './ModalEditUser'
+import ModalEditUser from './ModalEditUser';
+import _ from 'lodash';
 
 const TableUsers = () => {
 
@@ -24,7 +25,7 @@ const TableUsers = () => {
             setListUsers(res.data)
             setTotalUsers(res.total)
             setTotalPages(res.total_pages)
-            console.log(res)
+            // console.log(res)
         }
 
     }
@@ -39,9 +40,22 @@ const TableUsers = () => {
     }
 
     const handleEditUser = (user)=>{
-        console.log(user);
+        // console.log(user);
         setDataUserEdit(user);
         setIsShowModalEdit(true);
+
+    }
+
+    const handleEditUserFromModal = (user)=>{
+        let index = listUsers.findIndex(item => item.id === user.id);
+        let cloneListUsers = _.cloneDeep(listUsers);
+        cloneListUsers[index].first_name = user.first_name;
+        setListUsers(cloneListUsers);
+        
+        // console.log("listUSers:",listUsers)
+        // console.log("clone: ",cloneListUsers)
+        // console.log("user:",user)
+        // console.log("index: ",index);
 
     }
 
@@ -125,14 +139,15 @@ const TableUsers = () => {
             <ModalAddNew
                 show={isShowModalAddNew}
                 handleClose={handleClose}
+                handleUpdateTable={handleUpdateTable}
                 />
 
             <ModalEditUser
                 dataUserEdit={dataUserEdit}
-                setDataUserEdit={setDataUserEdit}
                 show={isShowModalEdit}
                 handleEditUser={handleEditUser}
                 handleClose={handleClose}
+                handleEditUserFromModal={handleEditUserFromModal}
             />
         </Container>
     );
