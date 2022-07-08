@@ -1,10 +1,20 @@
 import React from 'react';
-import { Modal, Button,Form } from 'react-bootstrap'
+import { Modal, Button, Form } from 'react-bootstrap'
+import { deleteUser } from '../services/UserService'
+import { toast } from 'react-toastify'
 
 const ModalConfirm = (props) => {
-    const { show, handleClose,dataUserDelete } = props;
-    const confirmDelete = ()=>{
-
+    const { show, handleClose, dataUserDelete, handleDeleteUserFromModal } = props;
+    const confirmDelete = async () => {
+        let res = await deleteUser(dataUserDelete.id);
+        console.log("check res: ", res);
+        if (res && +res.statusCode === 204) {
+            toast.success("Delete user successfully!");
+            handleDeleteUserFromModal(dataUserDelete);
+            handleClose();
+        } else {
+            toast.error("Error delete user");
+        }
     }
     return (
         <Modal
@@ -22,13 +32,13 @@ const ModalConfirm = (props) => {
                         <Form>
                             <span>
                                 This action can't be undone!
-                                <br/>
+                                <br />
                                 Are you sure to delete this user,
-                                <br/>
+                                <br />
                                 <b>email={dataUserDelete.email} ?</b>
                             </span>
-                            
-                            
+
+
 
                         </Form>
                     </div>

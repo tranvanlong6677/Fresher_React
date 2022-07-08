@@ -19,10 +19,10 @@ const TableUsers = () => {
     const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
     const [isShowModalEdit, setIsShowModalEdit] = useState(false);
 
-    const [dataUserEdit,setDataUserEdit] = useState({});
-    const [dataUserDelete,setDataUserDelete] = useState({});
+    const [dataUserEdit, setDataUserEdit] = useState({});
+    const [dataUserDelete, setDataUserDelete] = useState({});
 
-    const [isShowModalDelete,setIsShowModalDelete] = useState(false);
+    const [isShowModalDelete, setIsShowModalDelete] = useState(false);
 
     const getUsers = async (page) => {
         let res = await fetchAllUsers(page);
@@ -42,28 +42,35 @@ const TableUsers = () => {
         setIsShowModalDelete(false);
     }
 
-    const handleUpdateTable = (user)=>{
-        setListUsers([user,...listUsers]);
+    const handleUpdateTable = (user) => {
+        setListUsers([user, ...listUsers]);
     }
 
-    const handleEditUser = (user)=>{
+    const handleEditUser = (user) => {
         // console.log(user);
         setDataUserEdit(user);
         setIsShowModalEdit(true);
 
     }
 
-    const handleEditUserFromModal = (user)=>{
+    const handleEditUserFromModal = (user) => {
         let index = listUsers.findIndex(item => item.id === user.id);
         let cloneListUsers = _.cloneDeep(listUsers);
         cloneListUsers[index].first_name = user.first_name;
         setListUsers(cloneListUsers);
-        
+
         // console.log("listUSers:",listUsers)
         // console.log("clone: ",cloneListUsers)
         // console.log("user:",user)
         // console.log("index: ",index);
 
+    }
+
+    const handleDeleteUserFromModal = (user)=>{
+        let cloneListUsers = _.cloneDeep(listUsers);
+        cloneListUsers = cloneListUsers.filter(item => item.id!==user.id)
+        setListUsers(cloneListUsers);
+        console.log(cloneListUsers);
     }
 
     const handleDeleteUser = (user) => {
@@ -111,13 +118,13 @@ const TableUsers = () => {
                                     <td>
                                         <button
                                             className="btn btn-warning mx-3"
-                                            onClick={()=>handleEditUser(item)}
+                                            onClick={() => handleEditUser(item)}
                                         >
                                             Edit
                                         </button>
                                         <button
                                             className="btn btn-danger "
-                                            onClick={()=>handleDeleteUser(item)}
+                                            onClick={() => handleDeleteUser(item)}
                                         >
                                             Delete
                                         </button>
@@ -154,7 +161,7 @@ const TableUsers = () => {
                 show={isShowModalAddNew}
                 handleClose={handleClose}
                 handleUpdateTable={handleUpdateTable}
-                />
+            />
 
             <ModalEditUser
                 dataUserEdit={dataUserEdit}
@@ -167,7 +174,9 @@ const TableUsers = () => {
                 show={isShowModalDelete}
                 handleClose={handleClose}
                 dataUserDelete={dataUserDelete}
+                handleDeleteUserFromModal={handleDeleteUserFromModal}
             />
+            
         </Container>
     );
 };
