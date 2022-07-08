@@ -6,7 +6,7 @@ import { postCreateUser } from '../services/UserService'
 import { toast } from 'react-toastify';
 
 const ModalAddNew = (props) => {
-    const { show, handleClose,handleUpdateTable } = props;
+    const { show, handleClose, handleUpdateTable } = props;
     const [name, setName] = useState("");
     const [job, setJob] = useState("");
     const handleSaveUser = async (name, job) => {
@@ -25,7 +25,7 @@ const ModalAddNew = (props) => {
                 draggable: true,
                 progress: undefined,
             });
-            handleUpdateTable({first_name:name,id:res.id});
+            handleUpdateTable({ first_name: name, id: res.id });
             handleClose();
 
         } else {
@@ -34,7 +34,12 @@ const ModalAddNew = (props) => {
         }
     }
     return (
-        <Modal show={show} onHide={handleClose}>
+        <Modal
+            show={show}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Add New User</Modal.Title>
             </Modal.Header>
