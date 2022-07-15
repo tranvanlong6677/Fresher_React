@@ -9,6 +9,7 @@ import ModalAddNew from './ModalAddNew';
 import ModalEditUser from './ModalEditUser';
 import ModalConfirm from './ModalConfirm';
 import _ from 'lodash';
+import './TableUser.scss'
 
 const TableUsers = () => {
 
@@ -24,6 +25,8 @@ const TableUsers = () => {
 
     const [isShowModalDelete, setIsShowModalDelete] = useState(false);
 
+    const [sortBy,setSortBy] = useState("asc");
+    const [sortField, setSortField] = useState("id")
     const getUsers = async (page) => {
         let res = await fetchAllUsers(page);
 
@@ -66,9 +69,9 @@ const TableUsers = () => {
 
     }
 
-    const handleDeleteUserFromModal = (user)=>{
+    const handleDeleteUserFromModal = (user) => {
         let cloneListUsers = _.cloneDeep(listUsers);
-        cloneListUsers = cloneListUsers.filter(item => item.id!==user.id)
+        cloneListUsers = cloneListUsers.filter(item => item.id !== user.id)
         setListUsers(cloneListUsers);
         console.log(cloneListUsers);
     }
@@ -77,6 +80,15 @@ const TableUsers = () => {
         setIsShowModalDelete(true);
         setDataUserDelete(user);
         console.log(user)
+    }
+
+    const handleSort =(sortBy,sortField)=> {
+        setSortBy(sortBy);
+        setSortField(sortField);
+        let cloneListUsers = _.cloneDeep(listUsers);
+        cloneListUsers = _.orderBy(cloneListUsers,[sortField],[sortBy])
+        // console.log(cloneListUsers);
+        setListUsers(cloneListUsers);
     }
 
     useEffect(() => {
@@ -99,8 +111,40 @@ const TableUsers = () => {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>Id</th>
-                        <th>First Name</th>
+                        <th>
+                            <div className="sort-header">
+                                <span>ID</span>
+                                <span>
+                                    <i 
+                                        className="fa-solid fa-arrow-down-long"
+                                        onClick={()=>handleSort("desc","id")}
+                                    >
+
+                                    </i>
+                                    <i 
+                                        className="fa-solid fa-arrow-up-long"
+                                        onClick={()=>handleSort("asc","id")}
+                                    ></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="sort-header">
+                                <span>First Name</span>
+                                <span>
+                                    <i 
+                                        className="fa-solid fa-arrow-down-long"
+                                        onClick={()=>handleSort("desc","first_name")}
+                                    >
+
+                                    </i>
+                                    <i 
+                                        className="fa-solid fa-arrow-up-long"
+                                        onClick={()=>handleSort("asc","first_name")}
+                                    ></i>
+                                </span>
+                            </div>
+                        </th>
                         <th>Last Name</th>
                         <th>Email</th>
                         <th>Action</th>
@@ -176,7 +220,7 @@ const TableUsers = () => {
                 dataUserDelete={dataUserDelete}
                 handleDeleteUserFromModal={handleDeleteUserFromModal}
             />
-            
+
         </Container>
     );
 };
