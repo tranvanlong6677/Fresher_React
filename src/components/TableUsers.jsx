@@ -10,6 +10,7 @@ import ModalEditUser from './ModalEditUser';
 import ModalConfirm from './ModalConfirm';
 import _ from 'lodash';
 import './TableUser.scss'
+import {debounce} from "lodash"
 
 const TableUsers = () => {
 
@@ -27,6 +28,7 @@ const TableUsers = () => {
 
     const [sortBy,setSortBy] = useState("asc");
     const [sortField, setSortField] = useState("id")
+
     const getUsers = async (page) => {
         let res = await fetchAllUsers(page);
 
@@ -93,6 +95,7 @@ const TableUsers = () => {
 
     useEffect(() => {
         //call APIs
+        setListUsers()
         getUsers(1);
     }, [])
 
@@ -100,6 +103,19 @@ const TableUsers = () => {
         // getUsers(1);
         getUsers(event.selected + 1);
     }
+
+    const handleSearch = debounce((event) => {
+        console.log(event.target.value);
+        let data = event.target.value;
+        if(data){
+            let cloneListUsers = _.cloneDeep(listUsers);
+            cloneListUsers = cloneListUsers.filter(item=>item.email.includes(data))
+            // cloneListUsers = _.includes(cloneListUsers,[sortField],[sortBy])
+            setListUsers(cloneListUsers);
+        }else{
+            getUsers(1);
+        }
+    },1500)
     return (
         <Container>
             <div className="my-3 add-new" >
@@ -107,6 +123,15 @@ const TableUsers = () => {
                 <button className="btn btn-success"
                     onClick={() => setIsShowModalAddNew(true)}
                 >Add new user</button>
+            </div>
+
+            <div className="col-4 mb-3">
+                <input 
+                    className="form-control" 
+                    placeholder="Search user by email..." 
+                    onChange={(event)=>handleSearch(event)}
+                >
+                </input>
             </div>
             <Table striped bordered hover>
                 <thead>
@@ -179,6 +204,7 @@ const TableUsers = () => {
                     }
 
                 </tbody>
+                
             </Table>
             <ReactPaginate
                 nextLabel="next >"
